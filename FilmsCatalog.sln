@@ -9,6 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{156ED5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmsCatalog.Domain", "FilmsCatalog.Domain\FilmsCatalog.Domain.csproj", "{A8A13220-117F-4855-B9AC-1B84FAD6F0C8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business Logic", "Business Logic", "{1EFAFBDB-EE6A-480C-906B-46AC6A3FBA06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmsCatalog.BLL", "FilmsCatalog.BLL\FilmsCatalog.BLL.csproj", "{4DCCCA62-3EBA-418D-BCA5-8DAB5F15F1B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,12 +27,17 @@ Global
 		{A8A13220-117F-4855-B9AC-1B84FAD6F0C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8A13220-117F-4855-B9AC-1B84FAD6F0C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8A13220-117F-4855-B9AC-1B84FAD6F0C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DCCCA62-3EBA-418D-BCA5-8DAB5F15F1B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DCCCA62-3EBA-418D-BCA5-8DAB5F15F1B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DCCCA62-3EBA-418D-BCA5-8DAB5F15F1B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DCCCA62-3EBA-418D-BCA5-8DAB5F15F1B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A8A13220-117F-4855-B9AC-1B84FAD6F0C8} = {156ED5AD-3DAD-48FD-B8FF-F63B77BAACAB}
+		{4DCCCA62-3EBA-418D-BCA5-8DAB5F15F1B4} = {1EFAFBDB-EE6A-480C-906B-46AC6A3FBA06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7B3B9C5-C21B-4483-9926-5E014F5210C2}

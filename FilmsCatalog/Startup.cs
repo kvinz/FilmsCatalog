@@ -1,4 +1,8 @@
-using FilmsCatalog.Data;
+using FilmsCatalog.BLL.Interfaces;
+using FilmsCatalog.BLL.Services;
+using FilmsCatalog.Domain.EF;
+using FilmsCatalog.Domain.Interfaces;
+using FilmsCatalog.Domain.Repositories;
 using FilmsCatalog.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,9 +37,13 @@ namespace FilmsCatalog
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddScoped<IFilmService, FilmService>();
+            services.AddScoped<IRepositoryManager, RepositoryManager>();
+
             services.AddDatabaseDeveloperPageExceptionFilter();            
             services.AddControllersWithViews();
             services.AddRazorPages();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

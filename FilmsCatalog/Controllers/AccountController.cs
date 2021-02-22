@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FilmsCatalog.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using FilmsCatalog.Domain.Entities;
 
 namespace FilmsCatalog.Controllers
 {
