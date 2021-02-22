@@ -8,7 +8,7 @@ namespace FilmsCatalog.BLL.Interfaces
     public interface IFilmService
     {
         void CreateFilm(FilmDto filmDto);
-
         FilmDto GetFilm(int? id);
+        List<FilmForReturnDto> GetFilms();
     }
 }

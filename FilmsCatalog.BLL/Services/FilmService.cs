@@ -53,9 +53,18 @@ namespace FilmsCatalog.BLL.Services
             };
         }
 
-        /*public IEnumerable<FilmForReturnDto> GetFilms()
+        public List<FilmForReturnDto> GetFilms()
         {
             var films = _repositoryManager.Films.GetAll();
-        }*/
+
+            var result = new List<FilmForReturnDto>();
+
+            foreach(var item in films)
+            {
+                result.Add(new FilmForReturnDto(item));
+            }
+
+            return result;
+        }
     }
 }

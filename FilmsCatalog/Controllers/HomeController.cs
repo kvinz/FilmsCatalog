@@ -15,7 +15,7 @@ namespace FilmsCatalog.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        private IFilmService _filmService;
+        private readonly IFilmService _filmService;
 
         public HomeController(ILogger<HomeController> logger,
             IFilmService filmService)

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace FilmsCatalog.Models.Film
 {
-    public class FilmCatalogViewModel
+    public class FilmCatalogVM
     {
-
+        public List<FilmVM> Films { get; set; }
     }
 }

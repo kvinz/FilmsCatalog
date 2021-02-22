@@ -1,4 +1,5 @@
-﻿using FilmsCatalog.Models;
+﻿using FilmsCatalog.Domain.Entities;
+using FilmsCatalog.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,20 @@ namespace FilmsCatalog.BLL.DTO.Film
         public string Director { get; set; }
         public string ImgName { get; set; }
         public User User { get; set; }
+
+        public FilmForReturnDto(FilmEntity entity)
+        {
+            if(entity == null)
+            {
+                return;
+            }
+
+            Id = entity.Id;
+            Name = entity.Name;
+            Description = entity.Description;
+            ReleaseYear = entity.ReleaseYear;
+            Director = entity.Director;
+            ImgName = entity.ImgName;
+        }
     }
 }
