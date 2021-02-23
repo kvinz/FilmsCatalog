@@ -9,10 +9,18 @@
 <h2>Каталог фильмов</h2>
 
 <div class="row" style="margin-bottom:20px; margin-top:20px;">
-    <input type="submit" class="btn btn-success btn-sm" value="Добавить фильм" />
+    <a class="btn btn-success btn-sm" asp-area="" asp-controller="Film" asp-action="CreateFilm">Добавить фильм</a>
 </div>
 
-<div class="row"></div>
+@if (!string.IsNullOrEmpty(Model.Meassage))
+{
+    <div class="alert alert-success" role="alert">
+        @Model.Meassage
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
 
 <div class="row">
     <table class="table" style="margin-bottom:0px;">
@@ -27,6 +35,13 @@
                 {
                     <tr>
                         <td scope="row">
+                            @if (!string.IsNullOrEmpty(item.ImageName))
+                            {
+                            <img src="~/images/@item.ImageName"
+                                    
+                                    height="50" width="50" style="max-width:100%; height:auto;"
+                                    asp-append-version="true" />
+                            }
                             @item.Name
                         </td>
                         <td class="text-center">

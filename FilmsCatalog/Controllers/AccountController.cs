@@ -10,11 +10,11 @@ namespace FilmsCatalog.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<UserEntity> _userManager;
+        private readonly SignInManager<UserEntity> _signInManager;
         private readonly ILogger<AccountController> _logger;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager,
+        public AccountController(UserManager<UserEntity> userManager, SignInManager<UserEntity> signInManager,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
@@ -37,7 +37,7 @@ namespace FilmsCatalog.Controllers
                 return View(model);
             }
             
-            var user = new User
+            var user = new UserEntity
             {
                 Email = model.Email,
                 UserName = model.Email,

@@ -37,7 +37,7 @@ namespace FilmsCatalog.Domain.Entities
         public string CreatedBy { get; set; }
 
         [ForeignKey("CreatedBy")]
-        public User CreatedByUser { get; set; }
+        public UserEntity CreatedByUser { get; set; }
 
 
     }

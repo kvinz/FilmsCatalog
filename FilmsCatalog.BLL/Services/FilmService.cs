@@ -18,7 +18,7 @@ namespace FilmsCatalog.BLL.Services
             _repositoryManager = repositoryManager;
         }
 
-        public void CreateFilm(FilmDto filmDto)
+        public void CreateFilm(FilmForCreateDto filmDto)
         {
             var film = new FilmEntity
             {
@@ -26,7 +26,9 @@ namespace FilmsCatalog.BLL.Services
                 Description = filmDto.Description,
                 ReleaseYear = filmDto.ReleaseYear,
                 Director = filmDto.Director,
-                ImgName = filmDto.ImgName
+                ImgName = filmDto.ImgName,
+                CreatedDateTime = DateTime.Now,
+                CreatedBy = filmDto.UserId                
             };
 
             _repositoryManager.Films.Create(film);

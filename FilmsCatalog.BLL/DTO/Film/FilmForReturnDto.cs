@@ -14,7 +14,7 @@ namespace FilmsCatalog.BLL.DTO.Film
         public int ReleaseYear { get; set; }
         public string Director { get; set; }
         public string ImgName { get; set; }
-        public User User { get; set; }
+        public UserEntity User { get; set; }
 
         public FilmForReturnDto(FilmEntity entity)
         {

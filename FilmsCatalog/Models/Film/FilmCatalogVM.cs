@@ -8,5 +8,7 @@ namespace FilmsCatalog.Models.Film
     public class FilmCatalogVM
     {
         public List<FilmVM> Films { get; set; }
+
+        public string Meassage { get; set; }
     }
 }

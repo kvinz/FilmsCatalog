@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace FilmsCatalog.Models
 {
-    public class User : IdentityUser
+    public class UserEntity : IdentityUser
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

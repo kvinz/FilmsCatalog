@@ -8,7 +8,7 @@ using System.Text;
 
 namespace FilmsCatalog.Domain.EF
 {
-    public class ApplicationDbContext : IdentityDbContext<User>
+    public class ApplicationDbContext : IdentityDbContext<UserEntity>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
