@@ -25,7 +25,8 @@ namespace FilmsCatalog.Domain.Repositories
 
         public FilmEntity Get(int id)
         {
-            return _context.Films.Find(id);
+            return _context.Films
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public void Create(FilmEntity entity)

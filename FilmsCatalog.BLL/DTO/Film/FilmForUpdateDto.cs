@@ -1,12 +1,11 @@
 ﻿using FilmsCatalog.Domain.Entities;
-using FilmsCatalog.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FilmsCatalog.BLL.DTO.Film
 {
-    public class FilmForReturnDto
+    public class FilmForUpdateDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -16,20 +15,13 @@ namespace FilmsCatalog.BLL.DTO.Film
         public string ImgName { get; set; }
         public string UserId { get; set; }
 
-        public FilmForReturnDto(FilmEntity entity)
+        public void UpdateEntity(FilmEntity entity)
         {
-            if(entity == null)
-            {
-                return;
-            }
-
-            Id = entity.Id;
-            Name = entity.Name;
-            Description = entity.Description;
-            ReleaseYear = entity.ReleaseYear;
-            Director = entity.Director;
-            ImgName = entity.ImgName;
-            UserId = entity.CreatedBy;
+            entity.Name = Name;
+            entity.Description = Description;
+            entity.ReleaseYear = ReleaseYear;
+            entity.Director = Director;
+            entity.ImgName = string.IsNullOrEmpty(ImgName) ? entity.ImgName : ImgName;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace FilmsCatalog.BLL.Services
             _repositoryManager = repositoryManager;
         }
 
-        public void CreateFilm(FilmForCreateDto filmDto)
+        public int CreateFilm(FilmForCreateDto filmDto)
         {
             var film = new FilmEntity
             {
@@ -32,10 +32,10 @@ namespace FilmsCatalog.BLL.Services
             };
 
             _repositoryManager.Films.Create(film);
-            _repositoryManager.SaveChanges();
+            return _repositoryManager.SaveChanges();
         }
 
-        public FilmDto GetFilm(int? id)
+        public FilmForReturnDto GetFilm(int? id)
         {
             if (id == null)
                 throw new ValidationException("Не указан id фильма", "");
@@ -45,14 +45,7 @@ namespace FilmsCatalog.BLL.Services
             if(film == null)
                 throw new ValidationException("Фильм не найден", "");
 
-            return new FilmDto
-            {
-                Name = film.Name,
-                Description = film.Description,
-                ReleaseYear = film.ReleaseYear,
-                Director = film.Director,
-                ImgName = film.ImgName
-            };
+            return new FilmForReturnDto(film);
         }
 
         public List<FilmForReturnDto> GetFilms()
@@ -67,6 +60,19 @@ namespace FilmsCatalog.BLL.Services
             }
 
             return result;
+        }
+
+        public int UpdateFilm(FilmForUpdateDto filmForUpdateDto)
+        {
+            var film = _repositoryManager.Films.Get(filmForUpdateDto.Id);
+
+            if (film == null)
+                throw new ValidationException("Фильм не найден", "");
+
+            filmForUpdateDto.UpdateEntity(film);
+            
+            _repositoryManager.Films.Update(film);
+           return  _repositoryManager.SaveChanges();
         }
     }
 }

@@ -1,0 +1,48 @@
+﻿@model FilmsCatalog.Models.Film.ViewFilmVM
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="form-row">
+    <div class="form-group col-md-4 col-sm-6 col-12">
+        <img src="~/images/@Model.ImageName"
+                style="max-width:100%; height:auto;"
+                asp-append-version="true" />
+    </div>
+    <div class="form-group col-md-8 col-sm-6 col-12">
+        <div class="form-row">
+            <div class="form-group col-md-12 col-sm-6 col-12">
+                <b><label style="font-size:30px;">О фильме</label></b>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12 col-sm-6 col-12">
+                <b><label asp-for="Description" style="font-size:20px; color:#80858a; width:150px;"></label></b>
+                <label> @Model.Description </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12 col-sm-6 col-12">
+                <b><label asp-for="ReleaseYear" style="font-size:20px; color:#80858a; width:150px;"></label></b>
+                <label> @Model.ReleaseYear </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12 col-sm-6 col-12">
+                <b><label asp-for="Director" style="font-size:20px; color:#80858a; width:150px;"></label></b>
+                <label> @Model.Director </label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12 col-sm-6 col-12">
+                <b><label asp-for="UserName" style="font-size:20px; color:#80858a; width:150px;"></label></b>
+                <label> @Model.UserName </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-row">
+        <a class="btn btn-outline-success btn-sm" asp-area="" asp-controller="Film" asp-action="GetFilms">Назад</a>
+</div>

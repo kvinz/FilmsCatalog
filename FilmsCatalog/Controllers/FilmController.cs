@@ -10,6 +10,10 @@ using System.Security.Claims;
 using FilmsCatalog.Helpers.Image;
 using Microsoft.AspNetCore.Hosting;
 using FilmsCatalog.BLL.DTO.Film;
+using FilmsCatalog.BLL.Infrastructure;
+using FilmsCatalog.Enums;
+using System.IO;
+using FilmsCatalog.Models;
 
 namespace FilmsCatalog.Controllers
 {
@@ -18,22 +22,42 @@ namespace FilmsCatalog.Controllers
     {
         private readonly IFilmService _filmService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly UserManager<UserEntity> _userManager;
 
         public FilmController(IFilmService filmService,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            UserManager<UserEntity> userManager)
         {
             _filmService = filmService;
             _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
         }
 
         [HttpGet]
-        [ValidateAntiForgeryToken]
         public IActionResult Index()
         {
             return View();
         }
-        
-        public ActionResult GetFilms(string message)
+
+        [HttpGet]
+        public async Task<ActionResult> GetFilm(int id)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var userName = $"{user.FirstName} {user.MiddleName} {user.LastName}";
+                var filmDto = _filmService.GetFilm(id);
+
+                return View("ViewFilm", new ViewFilmVM(filmDto, userName));
+            }
+            catch (ValidationException ex)
+            {
+                return RedirectToAction("GetFilms", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetFilms(string message, MessageTypeEnum messageType)
         {
             var films = _filmService.GetFilms();
 
@@ -45,14 +69,17 @@ namespace FilmsCatalog.Controllers
                 result.Films.Add(new FilmVM
                 {
                     Id = item.Id,
-                    Name = $"{item.Name} ({item.ReleaseYear.ToString()} г.)",
+                    Name = $"{item.Name} ({item.ReleaseYear} г.)",
                     ImageName = item.ImgName
                     
                 });
             });
 
-            if(!string.IsNullOrEmpty(message))
-                result.Meassage = message;
+            if (!string.IsNullOrEmpty(message))
+            {
+                result.Message = message;
+                result.MessageType = EnumHelper.GetDescription(messageType);
+            }
 
             return View("FilmCatalog", result);
         }
@@ -65,17 +92,17 @@ namespace FilmsCatalog.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateFilm(CreateFilmVM createFilm)
+        public ActionResult CreateFilm(CreateFilmVM createFilmModel)
         {
             if (!ModelState.IsValid)
             {
-                return View(createFilm);
+                return View(createFilmModel);
             }
 
-            if (createFilm.ReleaseYear < 1895 || createFilm.ReleaseYear > DateTime.Now.Year)
+            if (createFilmModel.ReleaseYear < 1895 || createFilmModel.ReleaseYear > DateTime.Now.Year)
             {
                 ModelState.AddModelError(string.Empty, "Указан неверный год выпуска");
-                return View(createFilm);
+                return View(createFilmModel);
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -83,28 +110,117 @@ namespace FilmsCatalog.Controllers
             if(userId == null)
             {
                 ModelState.AddModelError(string.Empty, "Пользователь не авторизован");
-                return View(createFilm);
+                return View(createFilmModel);
             }
 
-            var imageName = ImageHelper.UploadImage(createFilm.ImageFile, _webHostEnvironment);
+            var imageName = ImageHelper.UploadImage(createFilmModel.ImageFile, _webHostEnvironment);
 
             var filmCreateDto = new FilmForCreateDto
             {
-                Name = createFilm.Name,
-                Description = createFilm.Description,
-                ReleaseYear = createFilm.ReleaseYear,
-                Director = createFilm.Director,
+                Name = createFilmModel.Name,
+                Description = createFilmModel.Description,
+                ReleaseYear = createFilmModel.ReleaseYear,
+                Director = createFilmModel.Director,
                 ImgName = imageName,
                 UserId = userId
             };
 
             _filmService.CreateFilm(filmCreateDto);
 
-            var alertMessage = $"Фильм {createFilm.Name} успешно создан!";
+            var alertMessage = $"Фильм \"{createFilmModel.Name}\" успешно создан!";
 
-            return RedirectToAction("GetFilms", "Film", new { message = alertMessage });
+            return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success});
         }
 
-        
+        [HttpGet]
+        public ActionResult UpdateFilm(int id)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (userId == null)
+                {
+                    var alertMessage = "Пользователь не авторизован";
+                    return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Danger });
+                }
+
+                var filmDto = _filmService.GetFilm(id);
+
+                if(string.IsNullOrEmpty(filmDto.UserId) || !filmDto.UserId.Equals(userId))
+                {
+                    var alertMessage = "Нет доступа к редактированию фильма";
+                    return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Danger });
+                }
+
+                return View("UpdateFilm", new UpdateFilmVM(filmDto));
+            }
+            catch (ValidationException ex)
+            {
+                return RedirectToAction("GetFilms", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult UpdateFilm(UpdateFilmVM updateFilmModel)
+        {
+            var imageName = "";
+            var alertMessage = "";
+
+            if (!ModelState.IsValid)
+            {
+                return View(updateFilmModel);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                ModelState.AddModelError(string.Empty, "Пользователь не авторизован");
+                return View(updateFilmModel);
+            }                                 
+
+            // Если обновляется постер для фильма
+            if (updateFilmModel.ImageFile != null)
+            {
+                imageName = ImageHelper.UploadImage(updateFilmModel.ImageFile, _webHostEnvironment);
+
+                // Удаляем старый файл
+                var filmDto = _filmService.GetFilm(updateFilmModel.Id);
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                string filePath = Path.Combine(uploadsFolder, filmDto.ImgName);
+                if(!string.IsNullOrEmpty(filmDto.ImgName))
+                    System.IO.File.Delete(filePath);
+            }
+
+            var filmForUpdateDto = new FilmForUpdateDto
+            {
+                Id = updateFilmModel.Id,
+                Name = updateFilmModel.Name,
+                Description = updateFilmModel.Description,
+                ReleaseYear = updateFilmModel.ReleaseYear,
+                Director = updateFilmModel.Director,
+                ImgName = imageName,
+                UserId = userId
+            };
+
+            try
+            {
+                var result = _filmService.UpdateFilm(filmForUpdateDto);
+
+                if(result == 0)
+                {
+                     alertMessage = $"Обновить фильм не удалось !";
+                    return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success });
+                }
+            }
+            catch (ValidationException ex)
+            {
+                return RedirectToAction("GetFilms", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
+            }
+
+            alertMessage = $"Фильм \"{updateFilmModel.Name}\" успешно обновлен!";
+            return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success });
+        }
+
     }
 }

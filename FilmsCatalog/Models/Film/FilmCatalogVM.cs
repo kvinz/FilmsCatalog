@@ -9,6 +9,8 @@ namespace FilmsCatalog.Models.Film
     {
         public List<FilmVM> Films { get; set; }
 
-        public string Meassage { get; set; }
+        public string Message { get; set; }
+
+        public string MessageType { get; set; }
     }
 }
