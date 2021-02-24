@@ -5,8 +5,11 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
+    var user = await UserManager.GetUserAsync(User);
+    var userName = $"{user.FirstName} {user.MiddleName} {user.LastName}";
+
     <li class="nav-item">
-        <span  class="nav-link text-dark">Привет, @User.Identity.Name!</span>
+        <span  class="nav-link text-dark">Привет, @userName!</span>
     </li>
     <li class="nav-item">
         <form  class="form-inline" asp-controller="Account" asp-action="LogOut" asp-route-returnUrl="@Url.Action("Index", "Home")">

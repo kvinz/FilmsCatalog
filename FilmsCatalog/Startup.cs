@@ -49,7 +49,7 @@ namespace FilmsCatalog
                 options.ViewName = "Bootstrap4";
                 options.PageParameterName = "pageindex";
             });
-
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/SignIn");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

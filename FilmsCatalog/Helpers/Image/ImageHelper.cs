@@ -26,5 +26,19 @@ namespace FilmsCatalog.Helpers.Image
             }
             return uniqueFileName;
         }
+
+        public static bool IsImage(IFormFile imageFile)
+        {
+            if (imageFile == null) return false;
+
+            var extension = Path.GetExtension(imageFile.FileName)?.ToLower();
+
+            if (extension.Equals(".png") || extension.Equals(".jpg") || extension.Equals(".jpeg"))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

@@ -17,23 +17,27 @@ using FilmsCatalog.Models;
 using ReflectionIT.Mvc.Paging;
 using Microsoft.EntityFrameworkCore;
 using FilmsCatalog.Helpers.Pagination;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FilmsCatalog.Controllers
 {
-    
+    [Authorize]
     public class FilmController : Controller
     {
         private readonly IFilmService _filmService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly UserManager<UserEntity> _userManager;
+        private readonly SignInManager<UserEntity> _signInManager;
 
         public FilmController(IFilmService filmService,
             IWebHostEnvironment webHostEnvironment,
-            UserManager<UserEntity> userManager)
+            UserManager<UserEntity> userManager,
+            SignInManager<UserEntity> signInManager)
         {
             _filmService = filmService;
             _webHostEnvironment = webHostEnvironment;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpGet]
@@ -121,11 +125,17 @@ namespace FilmsCatalog.Controllers
                 return View(createFilmModel);
             }
 
+            if(!ImageHelper.IsImage(createFilmModel.ImageFile))
+            {
+                ModelState.AddModelError(string.Empty, "Неверный формат изображения ");
+                return View(createFilmModel);
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if(userId == null)
             {
-                ModelState.AddModelError(string.Empty, "Пользователь не авторизован");
+                ModelState.AddModelError(string.Empty, "Пользователь не найден");
                 return View(createFilmModel);
             }
 
@@ -188,10 +198,16 @@ namespace FilmsCatalog.Controllers
                 return View(updateFilmModel);
             }
 
+            if (!ImageHelper.IsImage(updateFilmModel.ImageFile))
+            {
+                ModelState.AddModelError(string.Empty, "Неверный формат изображения ");
+                return View(updateFilmModel);
+            }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
             {
-                ModelState.AddModelError(string.Empty, "Пользователь не авторизован");
+                ModelState.AddModelError(string.Empty, "Пользователь не найден");
                 return View(updateFilmModel);
             }                                 
 
