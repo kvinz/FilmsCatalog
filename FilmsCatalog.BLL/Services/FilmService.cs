@@ -5,6 +5,7 @@ using FilmsCatalog.Domain.Entities;
 using FilmsCatalog.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FilmsCatalog.BLL.Services
@@ -60,6 +61,11 @@ namespace FilmsCatalog.BLL.Services
             }
 
             return result;
+        }
+
+        public IQueryable<FilmEntity> GetAllQuery()
+        {
+            return _repositoryManager.Films.GetAllQueryable();
         }
 
         public int UpdateFilm(FilmForUpdateDto filmForUpdateDto)

@@ -10,6 +10,7 @@ namespace FilmsCatalog.Domain.Interfaces
     public interface IRepositoryBase<T> where T : class
     {
         IEnumerable<T> GetAll();
+        IQueryable<T> GetAllQueryable();
         T Get(int id);
         IEnumerable<T> Find(Func<T, Boolean> predicate);
         void Create(T item);

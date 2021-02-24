@@ -14,6 +14,9 @@ using FilmsCatalog.BLL.Infrastructure;
 using FilmsCatalog.Enums;
 using System.IO;
 using FilmsCatalog.Models;
+using ReflectionIT.Mvc.Paging;
+using Microsoft.EntityFrameworkCore;
+using FilmsCatalog.Helpers.Pagination;
 
 namespace FilmsCatalog.Controllers
 {
@@ -34,46 +37,27 @@ namespace FilmsCatalog.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        [ActionName("Index")]
+        public async Task<ActionResult> Index(string message, MessageTypeEnum messageType, int pageIndex = 1)
         {
-            return View();
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> GetFilm(int id)
-        {
-            try
+            var filmsQuery = _filmService.GetAllQuery().Select(x => new FilmVM
             {
-                var user = await _userManager.GetUserAsync(User);
-                var userName = $"{user.FirstName} {user.MiddleName} {user.LastName}";
-                var filmDto = _filmService.GetFilm(id);
+                Id = x.Id,
+                Name = x.Name,
+                ReleaseYear = x.ReleaseYear,
+                ImgName = x.ImgName
+            })
+                .OrderBy(o => o.Name);
 
-                return View("ViewFilm", new ViewFilmVM(filmDto, userName));
-            }
-            catch (ValidationException ex)
+            var model = await PagingList.CreateAsync(filmsQuery, PaginationHelper.CountItemsPerPage, pageIndex);
+
+            model.ForEach(item =>
             {
-                return RedirectToAction("GetFilms", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
-            }
-        }
-
-        [HttpGet]
-        public ActionResult GetFilms(string message, MessageTypeEnum messageType)
-        {
-            var films = _filmService.GetFilms();
+                item.Name = $"{item.Name} ({item.ReleaseYear} г.)";
+            });
 
             var result = new FilmCatalogVM();
-            result.Films = new List<FilmVM>();
-
-            films.ForEach(item =>
-            {
-                result.Films.Add(new FilmVM
-                {
-                    Id = item.Id,
-                    Name = $"{item.Name} ({item.ReleaseYear} г.)",
-                    ImageName = item.ImgName
-                    
-                });
-            });
+            result.Films = model;
 
             if (!string.IsNullOrEmpty(message))
             {
@@ -84,9 +68,41 @@ namespace FilmsCatalog.Controllers
             return View("FilmCatalog", result);
         }
 
+
+        [HttpGet]
+        public async Task<ActionResult> GetFilm(int id)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user != null)
+                {
+                    var userName = $"{user.FirstName} {user.MiddleName} {user.LastName}";
+                    var filmDto = _filmService.GetFilm(id);
+
+                    return View("ViewFilm", new ViewFilmVM(filmDto, userName));
+                }
+                else
+                    return RedirectToAction("SignIn", "Account");
+            }
+            catch (ValidationException ex)
+            {
+                return RedirectToAction("Index", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
+            }
+        }
+
         [HttpGet]
         public ActionResult CreateFilm()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                var alertMessage = "Пользователь не авторизован";
+                return RedirectToAction("Index", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Danger });
+            }
+
             return View("CreateFilm", new CreateFilmVM());
         }
 
@@ -129,7 +145,7 @@ namespace FilmsCatalog.Controllers
 
             var alertMessage = $"Фильм \"{createFilmModel.Name}\" успешно создан!";
 
-            return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success});
+            return RedirectToAction("Index", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success});
         }
 
         [HttpGet]
@@ -142,7 +158,7 @@ namespace FilmsCatalog.Controllers
                 if (userId == null)
                 {
                     var alertMessage = "Пользователь не авторизован";
-                    return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Danger });
+                    return RedirectToAction("Index", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Danger });
                 }
 
                 var filmDto = _filmService.GetFilm(id);
@@ -150,14 +166,14 @@ namespace FilmsCatalog.Controllers
                 if(string.IsNullOrEmpty(filmDto.UserId) || !filmDto.UserId.Equals(userId))
                 {
                     var alertMessage = "Нет доступа к редактированию фильма";
-                    return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Danger });
+                    return RedirectToAction("Index", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Danger });
                 }
 
                 return View("UpdateFilm", new UpdateFilmVM(filmDto));
             }
             catch (ValidationException ex)
             {
-                return RedirectToAction("GetFilms", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
+                return RedirectToAction("Index", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
             }
         }
 
@@ -210,16 +226,16 @@ namespace FilmsCatalog.Controllers
                 if(result == 0)
                 {
                      alertMessage = $"Обновить фильм не удалось !";
-                    return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success });
+                    return RedirectToAction("Index", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success });
                 }
             }
             catch (ValidationException ex)
             {
-                return RedirectToAction("GetFilms", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
+                return RedirectToAction("Index", "Film", new { message = ex.Message, messageType = MessageTypeEnum.Danger });
             }
 
             alertMessage = $"Фильм \"{updateFilmModel.Name}\" успешно обновлен!";
-            return RedirectToAction("GetFilms", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success });
+            return RedirectToAction("Index", "Film", new { message = alertMessage, messageType = MessageTypeEnum.Success });
         }
 
     }

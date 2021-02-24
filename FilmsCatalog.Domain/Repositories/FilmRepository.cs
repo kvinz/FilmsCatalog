@@ -23,6 +23,12 @@ namespace FilmsCatalog.Domain.Repositories
             return _context.Films;
         }
 
+        public  IQueryable<FilmEntity> GetAllQueryable()
+        {
+            IQueryable<FilmEntity> filmsQueryable = _context.Films;
+            return filmsQueryable;
+        }
+
         public FilmEntity Get(int id)
         {
             return _context.Films

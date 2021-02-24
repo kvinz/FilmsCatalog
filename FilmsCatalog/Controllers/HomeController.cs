@@ -1,6 +1,7 @@
 ﻿using FilmsCatalog.BLL.DTO.Film;
 using FilmsCatalog.BLL.Interfaces;
 using FilmsCatalog.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,37 +15,21 @@ namespace FilmsCatalog.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+        private readonly UserManager<UserEntity> _userManager;
         private readonly IFilmService _filmService;
 
         public HomeController(ILogger<HomeController> logger,
-            IFilmService filmService)
+            IFilmService filmService,
+            UserManager<UserEntity> userManager)
         {
             _logger = logger;
             _filmService = filmService;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async  Task<IActionResult> Index()
         {
-            //try
-            //{
-            //    var filmDto = new FilmDto
-            //    {
-            //        Name = "Крестный отец",
-            //        Description = "Фильм про мафию",
-            //        Director = "Ф. Ф. Копола",
-            //        ImgName = "хз",
-            //        ReleaseYear = 1111
-            //    };
-
-            //    _filmService.CreateFilm(filmDto);
-            //}
-            //catch(Exception ex)
-            //{
-
-            //}
-
-            var film = _filmService.GetFilm(1);
+            var user = await _userManager.GetUserAsync(User);
 
             return View();
         }

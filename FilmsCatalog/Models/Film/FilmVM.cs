@@ -9,6 +9,7 @@ namespace FilmsCatalog.Models.Film
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string ImageName { get; set; }
+        public int ReleaseYear { get; set; }
+        public string ImgName { get; set; }
     }
 }
