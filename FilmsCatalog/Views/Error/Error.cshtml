@@ -1,0 +1,16 @@
+﻿@model String
+
+<div class="col-middle">
+    <div class="text-center text-center">
+        <h1 class="error-number">Опаньки, ошибочка!</h1>
+    </div>
+    <div class="text-center text-center">
+        <img src="~/images/error1.jpg"
+             style="max-width:100%; height:auto;"
+             asp-append-version="true" />
+    </div>
+    <h4 class="text-danger">Exception Message: @Model</h4>
+    
+        <a class="btn btn-success btn-sm" asp-controller="Film" asp-action="Index">На главную</a>
+    
+</div>

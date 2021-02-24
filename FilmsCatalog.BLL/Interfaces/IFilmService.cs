@@ -4,15 +4,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FilmsCatalog.BLL.Interfaces
 {
     public interface IFilmService
     {
-        int CreateFilm(FilmForCreateDto filmDto);
-        FilmForReturnDto GetFilm(int? id);
-        List<FilmForReturnDto> GetFilms();
+        Task<int> CreateFilmAsync(FilmForCreateDto filmDto);
+        Task<FilmForReturnDto> GetFilmAsync(int? id);
+        Task<List<FilmForReturnDto>> GetFilmsAsync();
         IQueryable<FilmEntity> GetAllQuery();
-        int UpdateFilm(FilmForUpdateDto filmForUpdateDto);
+        Task<int> UpdateFilmAsync(FilmForUpdateDto filmForUpdateDto);
     }
 }

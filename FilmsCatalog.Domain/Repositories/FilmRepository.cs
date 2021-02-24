@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FilmsCatalog.Domain.Repositories
 {
@@ -18,9 +19,9 @@ namespace FilmsCatalog.Domain.Repositories
             _context = context;
         }
 
-        public IEnumerable<FilmEntity> GetAll()
+        public async Task<IEnumerable<FilmEntity>> GetAllAsync()
         {
-            return _context.Films;
+            return await _context.Films.ToListAsync();
         }
 
         public  IQueryable<FilmEntity> GetAllQueryable()
@@ -29,15 +30,15 @@ namespace FilmsCatalog.Domain.Repositories
             return filmsQueryable;
         }
 
-        public FilmEntity Get(int id)
+        public async Task<FilmEntity> GetAsync(int id)
         {
-            return _context.Films
-                .FirstOrDefault(x => x.Id == id);
+            return await _context.Films
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public void Create(FilmEntity entity)
+        public async Task CreateAsync(FilmEntity entity)
         {
-            _context.Films.Add(entity);
+            await _context.Films.AddAsync(entity);
         }
 
         public void Update(FilmEntity entity)
@@ -45,14 +46,9 @@ namespace FilmsCatalog.Domain.Repositories
             _context.Films.Update(entity);
         }
 
-        public IEnumerable<FilmEntity> Find(Func<FilmEntity, Boolean> predicate)
+        public async Task DeleteAsync(int id)
         {
-            return _context.Films.Where(predicate).ToList();
-        }
-
-        public void Delete(int id)
-        {
-            FilmEntity book = _context.Films.Find(id);
+            FilmEntity book =  await _context.Films.FindAsync(id);
             if (book != null)
                 _context.Films.Remove(book);
         }

@@ -13,19 +13,22 @@ namespace FilmsCatalog.Models.Film
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Обязательное поле")]
-        [Display(Name = "Название")]
+        [Display(Name = "Название*")]
+        [StringLength(255)]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Обязательное поле")]
-        [Display(Name = "Описание")]
+        [Display(Name = "Описание*")]
+        [StringLength(2000)]
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Обязательное поле")]
-        [Display(Name = "Год выпуска")]
+        [Display(Name = "Год выпуска*")]
         public int ReleaseYear { get; set; }
 
         [Required(ErrorMessage = "Обязательное поле")]
-        [Display(Name = "Режиссёр")]
+        [Display(Name = "Режиссёр*")]
+        [StringLength(255)]
         public string Director { get; set; }
 
         [Display(Name = "Постер")]

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FilmsCatalog.BLL.Services
 {
@@ -19,7 +20,7 @@ namespace FilmsCatalog.BLL.Services
             _repositoryManager = repositoryManager;
         }
 
-        public int CreateFilm(FilmForCreateDto filmDto)
+        public async Task<int> CreateFilmAsync(FilmForCreateDto filmDto)
         {
             var film = new FilmEntity
             {
@@ -32,16 +33,16 @@ namespace FilmsCatalog.BLL.Services
                 CreatedBy = filmDto.UserId                
             };
 
-            _repositoryManager.Films.Create(film);
-            return _repositoryManager.SaveChanges();
+            await _repositoryManager.Films.CreateAsync(film);
+            return await _repositoryManager.SaveChanges();
         }
 
-        public FilmForReturnDto GetFilm(int? id)
+        public async Task<FilmForReturnDto> GetFilmAsync(int? id)
         {
             if (id == null)
                 throw new ValidationException("Не указан id фильма", "");
 
-            var film = _repositoryManager.Films.Get(id.Value);
+            var film = await _repositoryManager.Films.GetAsync(id.Value);
 
             if(film == null)
                 throw new ValidationException("Фильм не найден", "");
@@ -49,9 +50,9 @@ namespace FilmsCatalog.BLL.Services
             return new FilmForReturnDto(film);
         }
 
-        public List<FilmForReturnDto> GetFilms()
+        public async Task<List<FilmForReturnDto>> GetFilmsAsync()
         {
-            var films = _repositoryManager.Films.GetAll();
+            var films = await _repositoryManager.Films.GetAllAsync();
 
             var result = new List<FilmForReturnDto>();
 
@@ -68,9 +69,9 @@ namespace FilmsCatalog.BLL.Services
             return _repositoryManager.Films.GetAllQueryable();
         }
 
-        public int UpdateFilm(FilmForUpdateDto filmForUpdateDto)
+        public async Task<int> UpdateFilmAsync(FilmForUpdateDto filmForUpdateDto)
         {
-            var film = _repositoryManager.Films.Get(filmForUpdateDto.Id);
+            var film = await _repositoryManager.Films.GetAsync(filmForUpdateDto.Id);
 
             if (film == null)
                 throw new ValidationException("Фильм не найден", "");
@@ -78,7 +79,7 @@ namespace FilmsCatalog.BLL.Services
             filmForUpdateDto.UpdateEntity(film);
             
             _repositoryManager.Films.Update(film);
-           return  _repositoryManager.SaveChanges();
+           return await  _repositoryManager.SaveChanges();
         }
     }
 }

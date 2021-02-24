@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FilmsCatalog.Domain.Interfaces
 {
@@ -9,6 +10,6 @@ namespace FilmsCatalog.Domain.Interfaces
     {
         IRepositoryBase<FilmEntity> Films { get; }
 
-        int SaveChanges();
+        Task<int> SaveChanges();
     }
 }

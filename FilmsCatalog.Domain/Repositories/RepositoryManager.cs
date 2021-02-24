@@ -4,6 +4,7 @@ using FilmsCatalog.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FilmsCatalog.Domain.Repositories
 {
@@ -28,9 +29,9 @@ namespace FilmsCatalog.Domain.Repositories
         }
             
 
-        public int SaveChanges()
+        public async Task<int> SaveChanges()
         {
-            return _context.SaveChanges();
+            return await _context.SaveChangesAsync();
         }
     }
 }
